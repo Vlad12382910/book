@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ copy.title }}</h1>
+<p><b>{{ copy.author }}</b> · {{ copy.city }} · {{ copy.condition|default:"—" }}</p>
+<p>{{ copy.description|default:"" }}</p>
+
+{% if copy.image %}
+    <img src="{{ copy.image.url }}" style="max-width:300px; border-radius:8px;">
+{% endif %}
+
+<hr>
+
+{% if user.is_authenticated %}
+    {% if copy.owner_id == user.id %}
+        <a class="btn" href="{% url 'book_edit' copy.id %}">Изменить</a>
+        <a class="btn btn-red" href="{% url 'book_delete' copy.id %}">Удалить</a>
+    {% elif copy.status == "available" %}
+        <a class="btn" href="{% url 'make_request' copy.id %}">Запросить (1 балл)</a>
+    {% endif %}
+{% else %}
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы запросить книгу.</p>
+{% endif %}
+{% endblock %}

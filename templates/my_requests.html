@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Мои заявки</h1>
+
+<h2>Входящие (просят у меня)</h2>
+<table>
+    <tr><th>Книга</th><th>Кто просит</th><th>Статус</th><th></th></tr>
+    {% for r in incoming %}
+        <tr>
+            <td>{{ r.copy.title }}</td>
+            <td>{{ r.requester.username }}</td>
+            <td>{{ r.get_status_display }}</td>
+            <td>
+                {% if r.status == "pending" %}
+                    <a class="btn btn-small" href="{% url 'confirm' r.id %}">Подтвердить</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4">Пусто</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Исходящие (прошу у других)</h2>
+<table>
+    <tr><th>Книга</th><th>Владелец</th><th>Статус</th><th></th></tr>
+    {% for r in outgoing %}
+        <tr>
+            <td>{{ r.copy.title }}</td>
+            <td>{{ r.copy.owner.username }}</td>
+            <td>{{ r.get_status_display }}</td>
+            <td>
+                {% if r.status == "pending" %}
+                    <a class="btn btn-small btn-red" href="{% url 'cancel' r.id %}">Отменить</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4">Пусто</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

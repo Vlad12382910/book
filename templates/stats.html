@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Статистика</h1>
+
+<div class="tiles">
+    <div class="tile"><div class="value">{{ total }}</div><div class="label">Всего книг</div></div>
+    <div class="tile"><div class="value">{{ available }}</div><div class="label">Доступно</div></div>
+    <div class="tile"><div class="value">{{ requests }}</div><div class="label">Заявок</div></div>
+    <div class="tile"><div class="value">{{ done }}</div><div class="label">Завершено</div></div>
+    <div class="tile"><div class="value">{{ share }}%</div><div class="label">Доля</div></div>
+</div>
+
+<canvas id="chart" style="max-width:600px;"></canvas>
+
+<p style="margin-top: 20px;">
+    <a class="btn" href="{% url 'export_csv' %}">Скачать CSV</a>
+</p>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: {
+        labels: [{% for r in by_genre %}"{{ r.genre }}",{% endfor %}],
+        datasets: [{
+            label: 'Книг по жанрам',
+            data: [{% for r in by_genre %}{{ r.c }},{% endfor %}],
+            backgroundColor: '#8b5e34'
+        }]
+    }
+});
+</script>
+{% endblock %}

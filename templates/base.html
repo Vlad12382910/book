@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Буккроссинг{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<header>
+    <a class="logo" href="{% url 'book_list' %}">Буккроссинг</a>
+    <a href="{% url 'book_create' %}">Добавить</a>
+    <a href="{% url 'my_requests' %}">Мои заявки</a>
+    <a href="{% url 'stats' %}">Статистика</a>
+    <div class="right">
+        {% if user.is_authenticated %}
+            <span>{{ user.username }} · {{ user.profile.points }} б.</span>
+            <a href="{% url 'password_change' %}">Пароль</a>
+            <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                {% csrf_token %}
+                <button class="btn btn-small btn-grey">Выйти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Вход</a>
+            <a href="{% url 'signup' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</header>
+
+<div class="container">
+    {% if messages %}
+        <ul class="messages">
+            {% for m in messages %}
+                <li class="{{ m.tags }}">{{ m }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

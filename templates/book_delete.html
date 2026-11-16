@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Удалить книгу?</h1>
+<p>{{ copy.title }}</p>
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-red">Удалить</button>
+    <a class="btn btn-grey" href="{% url 'book_detail' copy.id %}">Отмена</a>
+</form>
+{% endblock %}

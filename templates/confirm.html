@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Подтвердить приём</h1>
+<p>{{ req.copy.title }}</p>
+<div class="form-box">
+    <form method="post">
+        {% csrf_token %}
+        <p><label>Способ</label>
+            <select name="method">
+                <option value="meeting">Личная встреча</option>
+                <option value="post">Почта</option>
+            </select></p>
+        <p><label>Трек-номер (если почтой)</label>
+            <input name="track"></p>
+        <button class="btn">Подтвердить</button>
+    </form>
+</div>
+{% endblock %}

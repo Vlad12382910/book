@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Добавить / изменить книгу</h1>
+<div class="form-box">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p><label>Название</label>
+            <input name="title" value="{{ copy.title|default:'' }}"></p>
+        <p><label>Автор</label>
+            <input name="author" value="{{ copy.author|default:'' }}"></p>
+        <p><label>Жанр</label>
+            <select name="genre">
+                {% for k, n in genres %}
+                    <option value="{{ k }}" {% if copy.genre == k %}selected{% endif %}>{{ n }}</option>
+                {% endfor %}
+            </select></p>
+        <p><label>Город</label>
+            <input name="city" value="{{ copy.city|default:'' }}"></p>
+        <p><label>Состояние</label>
+            <input name="condition" value="{{ copy.condition|default:'' }}"></p>
+        <p><label>Описание</label>
+            <textarea name="description">{{ copy.description|default:'' }}</textarea></p>
+        <p><label>Фото (до 5 МБ)</label>
+            <input type="file" name="image"></p>
+        <button class="btn">Сохранить</button>
+    </form>
+</div>
+{% endblock %}

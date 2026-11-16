@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Каталог книг</h1>
+
+<form class="filters" method="get">
+    <input name="q" placeholder="Поиск по названию или автору" value="{{ q }}">
+    <input name="city" placeholder="Город" value="{{ city }}">
+    <select name="genre">
+        <option value="">Все жанры</option>
+        {% for k, n in genres %}
+            <option value="{{ k }}" {% if genre == k %}selected{% endif %}>{{ n }}</option>
+        {% endfor %}
+    </select>
+    <input name="condition" placeholder="Состояние" value="{{ condition }}">
+    <select name="sort">
+        <option value="-created_at" {% if sort == "-created_at" %}selected{% endif %}>Сначала новые</option>
+        <option value="created_at" {% if sort == "created_at" %}selected{% endif %}>Сначала старые</option>
+        <option value="title" {% if sort == "title" %}selected{% endif %}>Название А-Я</option>
+        <option value="-title" {% if sort == "-title" %}selected{% endif %}>Название Я-А</option>
+        <option value="author" {% if sort == "author" %}selected{% endif %}>Автор А-Я</option>
+    </select>
+    <button class="btn">Применить</button>
+</form>
+
+<p><small id="hint"></small></p>
+
+<div class="book-grid">
+    {% for c in page %}
+        <div class="book-card">
+            {% if c.image %}<img src="{{ c.image.url }}" alt="">{% endif %}
+            <div class="title">{{ c.title }}</div>
+            <div class="author">{{ c.author }}</div>
+            <div class="meta">{{ c.city }} · {{ c.condition|default:"—" }}</div>
+            <a class="btn btn-small" href="{% url 'book_detail' c.id %}">Открыть</a>
+        </div>
+    {% empty %}
+        <p>Ничего не найдено.</p>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if page.has_previous %}
+        <a href="?{{ base_query }}&page={{ page.previous_page_number }}">← Назад</a>
+    {% endif %}
+    <span class="current">{{ page.number }} / {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}
+        <a href="?{{ base_query }}&page={{ page.next_page_number }}">Вперёд →</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const inp = document.querySelector('input[name="q"]');
+const hint = document.getElementById('hint');
+let t;
+
+inp.addEventListener('input', function () {
+    clearTimeout(t);
+    t = setTimeout(function () {
+        if (!inp.value.trim()) { hint.textContent = ''; return; }
+        fetch('/api/books/?q=' + encodeURIComponent(inp.value))
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                hint.textContent = d.items.length
+                    ? 'Найдено: ' + d.items.map(function (i) { return i.title; }).join(', ')
+                    : 'Нет совпадений';
+            });
+    }, 300);
+});
+</script>
+{% endblock %}
